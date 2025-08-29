@@ -1,34 +1,41 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Login - Mi Aplicación</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>Mi Sistema de Administración</h1>
-  </header>
+<?php
+    /**
+     * ==========================================
+     * index.php — Versión documentada
+     * ==========================================
+     *
+     * ¿Qué hace este archivo?
+     * -----------------------
+     * Es la “puerta de entrada” del sitio.
+     * - Importa el layout (estructura de la página).
+     * - Llama a setDom() para construir la página completa.
+     * - La imprime en el navegador con echo.
+     *
+     * IMPORTANTE: Por la condición del proyecto, NO hay HTML fuera de PHP.
+     */
 
-  <main>
-    <div class="contenedor-login">
-      <h2>Iniciar Sesión</h2>
-      <form action="procesoLogin.php" method="POST">
-        <label for="usuario">Usuario:</label>
-        <input type="text" id="usuario" name="usuario" required>
+    // Tipado estricto activado (si una función pide string y pasamos int, error).
+    declare(strict_types=1);
 
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" required>
+    // Traemos el archivo layout.php, que contiene la función setDom()
+    // __DIR__ significa “la carpeta donde está este archivo”.
+    // OJO: faltaba una barra en tu require_once. Debe ser '/src/layout.php'
+    require_once __DIR__ . '/src/layout.php';
 
-        <button type="submit">Ingresar</button>
-      </form>
-    </div>
-  </main>
-
-  <footer>
-    <p>&copy; <?php echo date("Y"); ?> - Mi Aplicación</p>
-  </footer>
-
-  <script src="js/script.js"></script>
-</body>
-</html>
+    /**
+     * Acá armamos la página usando setDom().
+     *
+     * Pasamos un array de opciones:
+     * - title: lo que aparece en la pestaña del navegador (<title>)
+     * - brand: el nombre que aparece en el header
+     * - main: (opcional) bloque <main>... personalizado
+     *
+     * Si no se pasa 'main', se usa por defecto component_main_form()
+     * definido en components.php.
+     */
+    echo setDom([
+        'title' => 'Formulario de Contacto',
+        'brand' => 'Proyecto del Grupo',
+        // 'main' => component_main_form(), // Ejemplo: podés cambiar el contenido principal
+    ]);
+?>
