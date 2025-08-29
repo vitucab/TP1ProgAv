@@ -38,4 +38,5 @@
         'brand' => 'Proyecto del Grupo',
         // 'main' => component_main_form(), // Ejemplo: podés cambiar el contenido principal
     ]);
+    /////sdjaklfjlkdñf
 ?>
