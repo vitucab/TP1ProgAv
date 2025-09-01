@@ -25,15 +25,26 @@ $clave      = isset($_POST['clave'])   ? trim((string)$_POST['clave'])   : '';
 $recordarme = isset($_POST['recordarme']) && $_POST['recordarme'] === '1';
 $rol   = isset($_POST['rol']) ? (string)$_POST['rol'] : '';
 $rolOk = in_array($rol, ['alumno','docente'], true);
+$materia = isset($_POST['materia']) ? (string)$_POST['materia'] : '';
+$materiasList = [
+  'Ingenieria en Software 2',
+  'Bases de Datos',
+  'Programacion Avanzada',
+  'Probabilidad y Estadistica',
+  'Paradigma y Lenguajes',
+  'Sistemas Operativos',
+];
+$materiaOk = in_array($materia, $materiasList, true);
 
-if ($usuario === 'fcytuader' && $clave === 'programacionavanzada') {
-  // Cookie "Recordarme" (antes de imprimir)
+if ($usuario === 'fcytuader' && $clave === 'programacionavanzada' && $rolOk && $materiaOk) {
   if ($recordarme) {
     setcookie('usuario', $usuario, time() + 7*24*60*60, '/');
     setcookie('rol', $rol, time() + 7*24*60*60, '/');
+    setcookie('materia', $materia, time() + 7*24*60*60, '/');
   } else {
     setcookie('usuario', '', time() - 3600, '/');
     setcookie('rol', '', time() - 3600, '/');
+    setcookie('materia', '', time() - 3600, '/');
   }
 
   $rolTxt = htmlspecialchars($rol, ENT_QUOTES, 'UTF-8');
