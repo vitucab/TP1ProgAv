@@ -152,6 +152,27 @@
       $rolCookie     = $_COOKIE['rol'] ?? '';
       $rolAlumnoChk  = $rolCookie === 'alumno'  ? 'checked' : '';
       $rolDocenteChk = $rolCookie === 'docente' ? 'checked' : '';
+      $rolCookie     = $_COOKIE['rol'] ?? ($rolCookie ?? '');
+      $materias = [
+        'Ingenieria en Software 2',
+        'Bases de Datos',
+        'Programacion Avanzada',
+        'Probabilidad y Estadistica',
+        'Paradigma y Lenguajes',
+        'Sistemas Operativos',
+      ];
+      $materiaCookie = $_COOKIE['materia'] ?? '';
+      if (!in_array($materiaCookie, $materias, true)) { $materiaCookie = ''; }
+      $optionsMateria = '';
+      foreach ($materias as $m) {
+        $safe = htmlspecialchars($m, ENT_QUOTES, 'UTF-8');
+        $sel  = ($m === $materiaCookie) ? ' selected' : '';
+        $optionsMateria .= "<option value=\"{$safe}\"{$sel}>{$safe}</option>";
+      }
+      $labelMateria = ($rolCookie === 'docente')
+        ? 'Materia a dictar clase particular'
+        : 'Materia a solicitar clase particular';
+
     return <<<HTML
     <!-- CONTENIDO PRINCIPAL -->
     <main class="container my-4">
@@ -222,6 +243,13 @@
                   </div>
 
                   <div class="form-text">Seleccioná tu rol.</div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="materia" id="label-materia">{$labelMateria}</label>
+                  <select class="form-select" id="materia" name="materia" required>
+                    {$optionsMateria}
+                  </select>
+                  <div class="form-text">Elegí una materia.</div>
                 </div>
                 <div class="form-check my-2">
                   <input class="form-check-input" 
@@ -332,6 +360,23 @@
               e.preventDefault(); // no envía al servidor
               window.location.assign('https://web.archive.org/web/20210426233039/https://pnrtscr.com/4ci90a');
             });
+          })();
+          </script>
+          <script>
+          (() => {
+            const label = document.getElementById('label-materia');
+            function refreshMateriaLabel() {
+              const r = document.querySelector('input[name="rol"]:checked');
+              if (!label) return;
+              label.textContent = (r && r.value === 'docente')
+                ? 'Materia a dictar clase particular'
+                : 'Materia a solicitar clase particular';
+            }
+            document.querySelectorAll('input[name="rol"]').forEach(el => {
+              el.addEventListener('change', refreshMateriaLabel);
+            });
+            // set inicial
+            refreshMateriaLabel();
           })();
           </script>
         <!-- JavaScript de Bootstrap 5 (con Popper) por CDN -->
