@@ -141,74 +141,60 @@
      *
      * @return string  HTML del <main> con el formulario
      */
+    
     function component_main_form(): string {
-        // Este formulario solo cubre la parte "front" (interfaz).
-        // La validación real y persistencia se hace del lado servidor (procesar.php).
-        return <<<HTML
-        <!-- CONTENIDO PRINCIPAL -->
-        <main class="container my-4">
-          <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
-              <div class="card shadow-sm">
-                <div class="card-body">
+    return <<<HTML
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container my-4">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+          <div class="card shadow-sm">
+            <div class="card-body">
 
-                  <h2 class="h4 mb-3">Formulario de contacto</h2>
+              <h2 class="h4 mb-3">Formulario de Login</h2>
 
-                  <!-- Formulario: se envía a procesar.php por POST -->
-                  <form id="form-contacto" method="POST" action="procesar.php" novalidate>
-                    <!-- Campo: Nombre -->
-                    <div class="mb-3">
-                      <label class="form-label" for="nombre">Nombre</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        id="nombre"
-                        name="nombre"
-                        required
-                        minlength="2"
-                        maxlength="80"
-                      >
-                      <div class="invalid-feedback">Ingresá un nombre válido (mín. 2).</div>
-                    </div>
+              <form id="form-contacto" method="POST" action="LoginProcess.php" novalidate>
 
-                    <!-- Campo: Email -->
-                    <div class="mb-3">
-                      <label class="form-label" for="email">Email</label>
-                      <input
-                        class="form-control"
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                      >
-                      <div class="invalid-feedback">Ingresá un email válido.</div>
-                    </div>
-
-                    <!-- Campo: Mensaje -->
-                    <div class="mb-3">
-                      <label class="form-label" for="mensaje">Mensaje</label>
-                      <textarea
-                        class="form-control"
-                        id="mensaje"
-                        name="mensaje"
-                        rows="4"
-                        required
-                        maxlength="500"
-                      ></textarea>
-                      <div class="invalid-feedback">El mensaje es obligatorio (máx. 500).</div>
-                    </div>
-
-                    <!-- Botón enviar -->
-                    <button class="btn btn-primary w-100" type="submit">Enviar</button>
-                  </form>
-
+                <div class="mb-3">
+                  <label class="form-label" for="usuario">Usuario</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    id="usuario"
+                    name="usuario"
+                    required
+                    minlength="4"
+                    maxlength="50"
+                  >
+                  <div class="invalid-feedback">Ingresá un usuario válido (mín. 4 caracteres).</div>
                 </div>
-              </div>
+
+                <div class="mb-3">
+                  <label class="form-label" for="clave">Contraseña</label>
+                  <input
+                    class="form-control"
+                    type="password"
+                    id="clave"
+                    name="clave"
+                    required
+                    minlength="6"
+                  >
+                  <div class="invalid-feedback">Ingresá tu contraseña (mín. 6 caracteres).</div>
+                </div>
+                <hr class="my-4">
+
+                <!-- Botón enviar -->
+                <button class="btn btn-primary w-100" type="submit">Enviar</button>
+              </form>
+
             </div>
           </div>
-        </main>
-        HTML;
-    }
+        </div>
+      </div>
+    </main>
+    HTML;
+}
+
 
     /**
      * component_footer
