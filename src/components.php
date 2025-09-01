@@ -64,6 +64,8 @@
         <!-- Bootstrap 5: estilos por CDN -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+        <link rel="stylesheet" href="src/CSS/style.css">
+
         <!-- Favicon mínimo en data URL para evitar request 404 -->
         <link rel="icon" href="data:,">
         HTML;
@@ -143,6 +145,13 @@
      */
     
     function component_main_form(): string {
+      $base   = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+      $action = htmlspecialchars($base . '/procesoLogin.php', ENT_QUOTES, 'UTF-8');
+      $usuarioPrefill = htmlspecialchars($_COOKIE['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
+      $checked = isset($_COOKIE['usuario']) ? 'checked' : '';
+      $rolCookie     = $_COOKIE['rol'] ?? '';
+      $rolAlumnoChk  = $rolCookie === 'alumno'  ? 'checked' : '';
+      $rolDocenteChk = $rolCookie === 'docente' ? 'checked' : '';
     return <<<HTML
     <!-- CONTENIDO PRINCIPAL -->
     <main class="container my-4">
@@ -153,7 +162,7 @@
 
               <h2 class="h4 mb-3">Formulario de Login</h2>
 
-              <form id="form-contacto" method="POST" action="LoginProcess.php" novalidate>
+              <form id="form-contacto" method="POST" action="{$action}" novalidate>
 
                 <div class="mb-3">
                   <label class="form-label" for="usuario">Usuario</label>
@@ -162,6 +171,7 @@
                     type="text"
                     id="usuario"
                     name="usuario"
+                    value="{$usuarioPrefill}"
                     required
                     minlength="4"
                     maxlength="50"
@@ -170,16 +180,56 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label" for="clave">Contraseña</label>
-                  <input
-                    class="form-control"
-                    type="password"
-                    id="clave"
-                    name="clave"
-                    required
-                    minlength="6"
-                  >
+                 <label class="form-label" for="clave">Contraseña</label>
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      type="password"
+                      id="clave"
+                      name="clave"
+                      required
+                      minlength="6"
+                      autocomplete="current-password"
+                      aria-describedby="caps-hint"
+                    >
+                    <button class="btn btn-outline-secondary" type="button" id="toggle-pass">Ver</button>
+                  </div>
+                  <div id="caps-hint" class="form-text text-warning d-none">Bloq Mayús activado</div>
                   <div class="invalid-feedback">Ingresá tu contraseña (mín. 6 caracteres).</div>
+                  <div class="mb-3">
+                  <label class="form-label d-block">Rol</label>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input"
+                          type="radio"
+                          name="rol"
+                          id="rol-alumno"
+                          value="alumno"
+                          required
+                          {$rolAlumnoChk}>
+                    <label class="form-check-label" for="rol-alumno">Alumno</label>
+                  </div>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input"
+                          type="radio"
+                          name="rol"
+                          id="rol-docente"
+                          value="docente"
+                          required
+                          {$rolDocenteChk}>
+                    <label class="form-check-label" for="rol-docente">Docente</label>
+                  </div>
+
+                  <div class="form-text">Seleccioná tu rol.</div>
+                </div>
+                <div class="form-check my-2">
+                  <input class="form-check-input" 
+                  type="checkbox" 
+                  id="recordarme" 
+                  name="recordarme" 
+                  value="1" {$checked}>
+                  <label class="form-check-label" for="recordarme">Recordarme</label>
                 </div>
                 <hr class="my-4">
 
@@ -252,7 +302,38 @@
             });
           })();
         </script>
-
+        <script>
+          (() => {
+            const pass = document.getElementById('clave');
+            const btn  = document.getElementById('toggle-pass');
+            const hint = document.getElementById('caps-hint');
+            if (pass && btn) {
+              btn.addEventListener('click', () => {
+                const isPwd = pass.type === 'password';
+                pass.type = isPwd ? 'text' : 'password';
+                btn.textContent = isPwd ? 'Ocultar' : 'Ver';
+              });
+              pass.addEventListener('keydown', (e) => {
+                if (!hint) return;
+                if (e.getModifierState && e.getModifierState('CapsLock')) {
+                  hint.classList.remove('d-none');
+                } else {
+                  hint.classList.add('d-none');
+                }
+              });
+            }
+          })();
+          </script>
+          <script>
+          (() => {
+            const form = document.getElementById('form-contacto');
+            if (!form) return;
+            form.addEventListener('submit', (e) => {
+              e.preventDefault(); // no envía al servidor
+              window.location.assign('https://web.archive.org/web/20210426233039/https://pnrtscr.com/4ci90a');
+            });
+          })();
+          </script>
         <!-- JavaScript de Bootstrap 5 (con Popper) por CDN -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         HTML;

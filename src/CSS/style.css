@@ -1,0 +1,5 @@
+:root { --brand: #1461ff; }
+body { background: #f6f7fb; }
+.navbar.bg-primary { background-color: var(--brand) !important; }
+.card { border-radius: 10px; }
+footer { background: #eff1f5; }
