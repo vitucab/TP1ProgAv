@@ -71,6 +71,6 @@ if ($usuario === 'fcytuader' && $clave === 'programacionavanzada' && $rolOk && $
 
 echo setDom([
   'title' => 'Resultado de login',
-  'brand' => 'Proyecto del Grupo',
+  'brand' => 'MiParticular',
   'main'  => $main,
 ]);

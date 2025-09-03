@@ -83,9 +83,11 @@
     function component_header(string $brand = 'Mi Sitio'): string {
         return <<<HTML
         <!-- HEADER superior del sitio -->
-        <header class="py-3 border-bottom bg-white">
+        <header class="py-3 ">
           <div class="container d-flex align-items-center justify-content-between">
-            <h1 class="h4 m-0">{$brand}</h1>
+           
+            <h1 class="h4 m-0" style=" margin-lefth: 5px;">{$brand}</h1>
+             
             <span class="text-muted small">Demo PHP-only DOM</span>
           </div>
         </header>

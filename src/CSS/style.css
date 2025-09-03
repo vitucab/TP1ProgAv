@@ -1,9 +1,9 @@
-:root { --brand: #240a99; }
+:root { --brand:   #1152b4;}
 
 body {
   background: #f6f7fb;
   font-family: Arial, sans-serif;
-  position: relative;   /* necesario para que el pseudo-elemento se posicione */
+  position: relative;   
   overflow: hidden;  
 }
 body::before {
@@ -14,17 +14,52 @@ body::before {
   width: 100%;
   height: 100%;
   background: url("../img/educacion.png") no-repeat center center / cover;
-  filter: blur(5px);          /* difumina la imagen */
-  opacity: 0.4;               /* controla visibilidad */
-  z-index: -1;                /* manda la imagen detrás del contenido */
+  filter: blur(5px);          
+  opacity: 0.4;               
+  z-index: -1;               
 }
 
+header {
 
+  background-color: #1152b4;
+   font-family: "Georgia", "Merriweather", serif; /* formal y elegante */
+  font-size: 1.25rem; /* un poco más discreto */
+  font-weight: 500;   /* más ligero, elegante */
+  color: #fff !important;
+  text-shadow: 0px 1px 1px rgba(0,0,0,0.15); /* sombra muy suave */
+  letter-spacing: 0.5px; /* apenas más espacio */
+ 
+}
+
+/* Reducir alto de la navbar */
+.navbar {
+  padding-top: 0rem;   /* antes suele ser 0.5rem o 1rem */
+  padding-bottom: 0rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  font-size: 0.85rem; 
+}
+
+/* Ajustar los enlaces */
+.navbar .nav-link {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 0.85rem; 
+}
+
+.navbar .nav-link {
+  font-size: 0.9rem;   /* más chico que el default (1rem) */
+  font-weight: 500;    /* se mantiene formal */
+  letter-spacing: 0.3px;
+}
 
 /* Navbar sobrescrita */
 .navbar.bg-primary {
   background-color: var(--brand) !important;
+  font-size: 0.9rem;   
 }
+
+/* Texto de la marca */
+
 
 /* Tarjetas redondeadas */
 .card {
