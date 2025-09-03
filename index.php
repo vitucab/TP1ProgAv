@@ -35,7 +35,8 @@
      */
     echo setDom([
         'title' => 'Formulario de Contacto',
-        'brand' => 'Proyecto del Grupo',
+        'brand' => 'Buscar Particular',
+
         // 'main' => component_main_form(), // Ejemplo: podés cambiar el contenido principal
     ]);
 ?>

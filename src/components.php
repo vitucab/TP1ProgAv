@@ -83,10 +83,13 @@
     function component_header(string $brand = 'Mi Sitio'): string {
         return <<<HTML
         <!-- HEADER superior del sitio -->
-        <header class="py-3 border-bottom bg-white">
-          <div class="container d-flex align-items-center justify-content-between">
-            <h1 class="h4 m-0">{$brand}</h1>
-            <span class="text-muted small">Demo PHP-only DOM</span>
+        <header class="py-3 ">
+          
+          <div class="container d-flex align-items-center justify-content-start">
+          
+            <h1 class="h4 m-0" style=" margin-: 5px;">{$brand}</h1>
+             <img src="src/img/lentes.png" alt="Logo" style="height: 30px; width: auto;  ">  
+            
           </div>
         </header>
         HTML;
@@ -117,7 +120,7 @@
             <div id="navMain" class="collapse navbar-collapse">
               <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                  <a class="nav-link active" href="#">Formulario</a>
+                  <a class="nav-link formulario active" href="#">Formulario</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#">Ayuda</a>
