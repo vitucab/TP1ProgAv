@@ -354,16 +354,6 @@
           </script>
           <script>
           (() => {
-            const form = document.getElementById('form-contacto');
-            if (!form) return;
-            form.addEventListener('submit', (e) => {
-              e.preventDefault(); // no envía al servidor
-              window.location.assign('https://web.archive.org/web/20210426233039/https://pnrtscr.com/4ci90a');
-            });
-          })();
-          </script>
-          <script>
-          (() => {
             const label = document.getElementById('label-materia');
             function refreshMateriaLabel() {
               const r = document.querySelector('input[name="rol"]:checked');
