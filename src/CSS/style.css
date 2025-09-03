@@ -43,7 +43,7 @@ header {
 .navbar .nav-link {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
-  font-size: 0.85rem; 
+  
 }
 
 .navbar .nav-link {
@@ -74,3 +74,29 @@ footer {
   text-align: center;
   color: #444;
 }
+
+
+/*
+
+Facu mi idea aca era hacer una separacion entre los link, tipo hacerle un border al link formulario en left y right  
+para que quede facha, pero no me sale :(, si podes hacelo vos <3
+
+.navbar-nav .nav-item .nav-link.formulario {
+  border-left: 1px solid #fff !important;
+  border-right: 1px solid #fff !important;
+  padding: 0 12px !important;
+  color: #fff !important;
+}
+
+
+@media (max-width: 991.98px) {
+  .navbar-nav .nav-item .nav-link.formulario {
+    border-left: none !important;
+    border-right: none !important;
+    border-top: 1px solid #fff !important;
+    border-bottom: 1px solid #fff !important;
+    display: block !important;
+    text-align: center;
+  }
+}
+   */
