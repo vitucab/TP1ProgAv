@@ -68,6 +68,21 @@
 
         <!-- Favicon mínimo en data URL para evitar request 404 -->
         <link rel="icon" href="data:,">
+
+        <!-- Ajustes para 0 scroll -->
+        <style>
+          /* Alturas fijas del header y footer (podés ajustar si cambiás paddings o tamaños) */
+          :root { --hdr: 64px; --ftr: 64px; }
+
+          html, body { height: 100%; overflow: hidden; } /* sin scroll */
+          header.site-header { height: var(--hdr); }
+          footer.site-footer { height: var(--ftr); }
+
+          /* El main ocupa exactamente el espacio restante de la pantalla */
+          main.fullscreen-center {
+            height: calc(100dvh - var(--hdr) - var(--ftr));
+          }
+        </style>
         HTML;
     }
 
@@ -81,19 +96,19 @@
      * @return string        HTML del <header>
      */
     function component_header(string $brand = 'Mi Sitio'): string {
-        return <<<HTML
-        <!-- HEADER superior del sitio -->
-        <header class="py-3 ">
-          
-          <div class="container d-flex align-items-center justify-content-start">
-          
-            <h1 class="h4 m-0" style=" margin-: 5px;">{$brand}</h1>
-             <img src="src/img/lentes.png" alt="Logo" style="height: 30px; width: auto;  ">  
-            
-          </div>
-        </header>
-        HTML;
-    }
+    return <<<HTML
+    <!-- HEADER superior del sitio -->
+    <header class="py-3 site-header"
+            style="background: linear-gradient(90deg, #007BFF 0%, #6f42c1 100%); color: #fff;">
+      <div class="container d-flex align-items-center justify-content-start h-100">
+        <img src="src/img/lentes.png" alt="Logo" style="height: 35px; width: auto; margin-right: 10px;">
+        <h1 class="h4 m-0">{$brand}</h1>
+      </div>
+    </header>
+    HTML;
+}
+
+
 
     /**
      * component_navbar
@@ -106,29 +121,7 @@
      */
     function component_navbar(): string {
         return <<<HTML
-        <!-- NAVBAR / Menú principal -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-          <div class="container">
-            <a class="navbar-brand" href="#">Inicio</a>
-
-            <!-- Botón de colapso (móviles) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Contenido colapsable -->
-            <div id="navMain" class="collapse navbar-collapse">
-              <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                  <a class="nav-link formulario active" href="#">Formulario</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Ayuda</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
+        
         HTML;
     }
 
@@ -148,133 +141,107 @@
      */
     
     function component_main_form(): string {
-      $base   = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-      $action = htmlspecialchars($base . '/procesoLogin.php', ENT_QUOTES, 'UTF-8');
-      $usuarioPrefill = htmlspecialchars($_COOKIE['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
-      $checked = isset($_COOKIE['usuario']) ? 'checked' : '';
-      $rolCookie     = $_COOKIE['rol'] ?? '';
-      $rolAlumnoChk  = $rolCookie === 'alumno'  ? 'checked' : '';
-      $rolDocenteChk = $rolCookie === 'docente' ? 'checked' : '';
-      $rolCookie     = $_COOKIE['rol'] ?? ($rolCookie ?? '');
-      $materias = [
-        'Ingenieria en Software 2',
-        'Bases de Datos',
-        'Programacion Avanzada',
-        'Probabilidad y Estadistica',
-        'Paradigma y Lenguajes',
-        'Sistemas Operativos',
-      ];
-      $materiaCookie = $_COOKIE['materia'] ?? '';
-      if (!in_array($materiaCookie, $materias, true)) { $materiaCookie = ''; }
-      $optionsMateria = '';
-      foreach ($materias as $m) {
-        $safe = htmlspecialchars($m, ENT_QUOTES, 'UTF-8');
-        $sel  = ($m === $materiaCookie) ? ' selected' : '';
-        $optionsMateria .= "<option value=\"{$safe}\"{$sel}>{$safe}</option>";
-      }
-      $labelMateria = ($rolCookie === 'docente')
-        ? 'Materia a dictar clase particular'
-        : 'Materia a solicitar clase particular';
+  $base   = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+  $action = htmlspecialchars($base . '/procesoLogin.php', ENT_QUOTES, 'UTF-8');
+  $usuarioPrefill = htmlspecialchars($_COOKIE['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
+  $checked = isset($_COOKIE['usuario']) ? 'checked' : '';
+  $rolCookie     = $_COOKIE['rol'] ?? '';
+  $rolAlumnoChk  = $rolCookie === 'alumno'  ? 'checked' : '';
+  $rolDocenteChk = $rolCookie === 'docente' ? 'checked' : '';
+  $rolCookie     = $_COOKIE['rol'] ?? ($rolCookie ?? '');
+  $materias = [
+    'Ingenieria en Software 2',
+    'Bases de Datos',
+    'Programacion Avanzada',
+    'Probabilidad y Estadistica',
+    'Paradigma y Lenguajes',
+    'Sistemas Operativos',
+  ];
+  $materiaCookie = $_COOKIE['materia'] ?? '';
+  if (!in_array($materiaCookie, $materias, true)) { $materiaCookie = ''; }
+  $optionsMateria = '';
+  foreach ($materias as $m) {
+    $safe = htmlspecialchars($m, ENT_QUOTES, 'UTF-8');
+    $sel  = ($m === $materiaCookie) ? ' selected' : '';
+    $optionsMateria .= "<option value=\"{$safe}\"{$sel}>{$safe}</option>";
+  }
+  $labelMateria = ($rolCookie === 'docente')
+    ? 'Materia a dictar clase particular'
+    : 'Materia a solicitar clase particular';
 
-    return <<<HTML
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="container my-4">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
-          <div class="card shadow-sm">
-            <div class="card-body">
+  $bgPath = 'src/img/educacion.png';
 
-              <h2 class="h4 mb-3">Formulario de Login</h2>
+  return <<<HTML
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="fullscreen-center d-flex align-items-center justify-content-center"
+        style="
+          background:
+            linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
+            url('{$bgPath}') center / cover no-repeat;
+        ">
+    <div class="container" style="max-width: 640px;">
+      <div class="card shadow-lg border-0 bg-white bg-opacity-75" style="backdrop-filter: blur(4px); margin: 0;">
+        <div class="card-body p-4">
+          <h2 class="h4 mb-3 text-center">Formulario de Login</h2>
 
-              <form id="form-contacto" method="POST" action="{$action}" novalidate>
-
-                <div class="mb-3">
-                  <label class="form-label" for="usuario">Usuario</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    id="usuario"
-                    name="usuario"
-                    value="{$usuarioPrefill}"
-                    required
-                    minlength="4"
-                    maxlength="50"
-                  >
-                  <div class="invalid-feedback">Ingresá un usuario válido (mín. 4 caracteres).</div>
-                </div>
-
-                <div class="mb-3">
-                 <label class="form-label" for="clave">Contraseña</label>
-                  <div class="input-group">
-                    <input
-                      class="form-control"
-                      type="password"
-                      id="clave"
-                      name="clave"
-                      required
-                      minlength="6"
-                      autocomplete="current-password"
-                      aria-describedby="caps-hint"
-                    >
-                    <button class="btn btn-outline-secondary" type="button" id="toggle-pass">Ver</button>
-                  </div>
-                  <div id="caps-hint" class="form-text text-warning d-none">Bloq Mayús activado</div>
-                  <div class="invalid-feedback">Ingresá tu contraseña (mín. 6 caracteres).</div>
-                  <div class="mb-3">
-                  <label class="form-label d-block">Rol</label>
-
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input"
-                          type="radio"
-                          name="rol"
-                          id="rol-alumno"
-                          value="alumno"
-                          required
-                          {$rolAlumnoChk}>
-                    <label class="form-check-label" for="rol-alumno">Alumno</label>
-                  </div>
-
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input"
-                          type="radio"
-                          name="rol"
-                          id="rol-docente"
-                          value="docente"
-                          required
-                          {$rolDocenteChk}>
-                    <label class="form-check-label" for="rol-docente">Docente</label>
-                  </div>
-
-                  <div class="form-text">Seleccioná tu rol.</div>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label" for="materia" id="label-materia">{$labelMateria}</label>
-                  <select class="form-select" id="materia" name="materia" required>
-                    {$optionsMateria}
-                  </select>
-                  <div class="form-text">Elegí una materia.</div>
-                </div>
-                <div class="form-check my-2">
-                  <input class="form-check-input" 
-                  type="checkbox" 
-                  id="recordarme" 
-                  name="recordarme" 
-                  value="1" {$checked}>
-                  <label class="form-check-label" for="recordarme">Recordarme</label>
-                </div>
-                <hr class="my-4">
-
-                <!-- Botón enviar -->
-                <button class="btn btn-primary w-100" type="submit">Enviar</button>
-              </form>
-
+          <form id="form-contacto" method="POST" action="{$action}" novalidate>
+            <div class="mb-3">
+              <label class="form-label" for="usuario">Usuario</label>
+              <input class="form-control" type="text" id="usuario" name="usuario"
+                     value="{$usuarioPrefill}" required minlength="4" maxlength="50">
+              <div class="invalid-feedback">Ingresá un usuario válido (mín. 4 caracteres).</div>
             </div>
-          </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="clave">Contraseña</label>
+              <div class="input-group">
+                <input class="form-control" type="password" id="clave" name="clave"
+                       required minlength="6" autocomplete="current-password" aria-describedby="caps-hint">
+                <button class="btn btn-outline-secondary" type="button" id="toggle-pass">Ver</button>
+              </div>
+              <div id="caps-hint" class="form-text text-warning d-none">Bloq Mayús activado</div>
+              <div class="invalid-feedback">Ingresá tu contraseña (mín. 6 caracteres).</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label d-block">Rol</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="rol" id="rol-alumno"
+                       value="alumno" required {$rolAlumnoChk}>
+                <label class="form-check-label" for="rol-alumno">Alumno</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="rol" id="rol-docente"
+                       value="docente" required {$rolDocenteChk}>
+                <label class="form-check-label" for="rol-docente">Docente</label>
+              </div>
+              <div class="form-text">Seleccioná tu rol.</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="materia" id="label-materia">{$labelMateria}</label>
+              <select class="form-select" id="materia" name="materia" required>
+                {$optionsMateria}
+              </select>
+              <div class="form-text">Elegí una materia.</div>
+            </div>
+
+            <div class="form-check my-2">
+              <input class="form-check-input" type="checkbox" id="recordarme" name="recordarme" value="1" {$checked}>
+              <label class="form-check-label" for="recordarme">Recordarme</label>
+            </div>
+
+            <hr class="my-4">
+            <button class="btn btn-primary w-100" type="submit">ENVIAR</button>
+          </form>
         </div>
       </div>
-    </main>
-    HTML;
+    </div>
+  </main>
+  HTML;
 }
+
+
 
 
     /**
@@ -285,18 +252,19 @@
      * @return string  HTML del <footer>
      */
     function component_footer(): string {
-        // Obtenemos el año actual para el copyright
-        $year = date('Y');
-
-        return <<<HTML
-        <!-- FOOTER / Pie de página -->
-        <footer class="bg-light py-4 mt-auto border-top">
-          <div class="container text-center text-muted small">
-            &copy; {$year} Equipo de Formulario. Todos los derechos reservados.
-          </div>
-        </footer>
-        HTML;
+    $year = date('Y');
+    return <<<HTML
+    <!-- FOOTER / Pie de página -->
+    <footer class="py-4 mt-auto site-footer"
+            style="background: linear-gradient(90deg, #007BFF 0%, #6f42c1 100%); color: #fff;">
+      <div class="container text-center small h-100 d-flex align-items-center justify-content-center">
+        &copy; {$year} Equipo de Formulario. Todos los derechos reservados.
+      </div>
+    </footer>
+    HTML;
     }
+
+
 
     /**
      * component_body_end_scripts
