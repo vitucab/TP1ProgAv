@@ -182,7 +182,7 @@
     <div class="container" style="max-width: 640px;">
       <div class="card shadow-lg border-0 bg-white bg-opacity-75" style="backdrop-filter: blur(4px); margin: 0;">
         <div class="card-body p-4">
-          <h2 class="h4 mb-3 text-center">Formulario de Login</h2>
+          <h2 class="h4 mb-3 text-center">Iniciar Sesión</h2>
 
           <form id="form-contacto" method="POST" action="{$action}" novalidate>
             <div class="mb-3">
@@ -258,7 +258,7 @@
     <footer class="py-4 mt-auto site-footer"
             style="background: linear-gradient(90deg, #007BFF 0%, #6f42c1 100%); color: #fff;">
       <div class="container text-center small h-100 d-flex align-items-center justify-content-center">
-        &copy; {$year} Equipo de Formulario. Todos los derechos reservados.
+        &copy; {$year} Equipo de MiParticular. Todos los derechos reservados.
       </div>
     </footer>
     HTML;
