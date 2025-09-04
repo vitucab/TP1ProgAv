@@ -51,7 +51,7 @@ if ($usuario === 'fcytuader' && $clave === 'programacionavanzada' && $rolOk && $
 
   $main = <<<HTML
   <main class="container my-4">
-    <div class="alert alert-success" role="alert">
+    <div class="alert alert-success text-center" role="alert">
       ingreso correctamente
     </div>
     <a class="btn btn-primary" href="index.php">Volver</a>
