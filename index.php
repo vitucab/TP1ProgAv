@@ -20,7 +20,7 @@
     // Traemos el archivo layout.php, que contiene la función setDom()
     // __DIR__ significa “la carpeta donde está este archivo”.
     // OJO: faltaba una barra en tu require_once. Debe ser '/src/layout.php'
-    require_once __DIR__ . '/src/layout.php';
+    require_once __DIR__ . '/src/inicio.php';
 
     /**
      * Acá armamos la página usando setDom().

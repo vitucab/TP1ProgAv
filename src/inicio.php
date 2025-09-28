@@ -56,7 +56,7 @@
         <head>
         {$head}
         </head>
-        <body class="d-flex flex-column min-vh-100 bg-body-tertiary">
+        <body class="min-h-screen flex flex-col">
         {$header}
         {$nav}
         {$main}

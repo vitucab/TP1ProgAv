@@ -46,43 +46,21 @@
      * - charset
      * - viewport (responsivo)
      * - <title> (dinámico por parámetro)
-     * - CSS de Bootstrap por CDN
+     * - TailwindCSS por CDN
      * - favicon mínimo para evitar 404 en algunos navegadores
      *
      * @param string $title  Título de la pestaña/navegador (opcional)
      * @return string        Bloque de HTML para insertar dentro de <head>
      */
     function component_head(string $title = 'Mi Formulario'): string {
-        // Usamos HEREDOC: el bloque empieza con <<<HTML y termina con HTML;
-        // Dentro se puede interpolar {$title}
         return <<<HTML
         <!-- HEAD del documento -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{$title}</title>
 
-        <!-- Bootstrap 5: estilos por CDN -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-        <link rel="stylesheet" href="src/CSS/style.css">
-
-        <!-- Favicon mínimo en data URL para evitar request 404 -->
-        <link rel="icon" href="data:,">
-
-        <!-- Ajustes para 0 scroll -->
-        <style>
-          /* Alturas fijas del header y footer (podés ajustar si cambiás paddings o tamaños) */
-          :root { --hdr: 64px; --ftr: 64px; }
-
-          html, body { height: 100%; overflow: hidden; } /* sin scroll */
-          header.site-header { height: var(--hdr); }
-          footer.site-footer { height: var(--ftr); }
-
-          /* El main ocupa exactamente el espacio restante de la pantalla */
-          main.fullscreen-center {
-            height: calc(100dvh - var(--hdr) - var(--ftr));
-          }
-        </style>
+        <!-- Tailwind CSS por CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
         HTML;
     }
 
@@ -98,151 +76,124 @@
     function component_header(string $brand = 'Mi Sitio'): string {
     return <<<HTML
     <!-- HEADER superior del sitio -->
-    <header class="py-3 site-header"
-            style="background: linear-gradient(90deg, #007BFF 0%, #6f42c1 100%); color: #fff;">
-      <div class="container d-flex align-items-center justify-content-start h-100">
-        <img src="src/img/lentes.png" alt="Logo" style="height: 35px; width: auto; margin-right: 10px;">
-        <h1 class="h4 m-0">{$brand}</h1>
+    <header class="py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+      <div class="container mx-auto flex items-center h-full">
+        <img src="src/img/lentes.png" alt="Logo" class="h-9 w-auto mr-2">
+        <h1 class="text-lg font-semibold">{$brand}</h1>
       </div>
     </header>
     HTML;
-}
-
-
+    }
 
     /**
      * component_navbar
      * ----------------
-     * Barra de navegación (menú) hecha con Bootstrap.
-     * Incluye botón “hamburguesa” para móviles y un par de links
-     * de ejemplo (“Formulario” y “Ayuda”).
+     * Barra de navegación (menú). 
+     * Con Tailwind podemos armar un nav responsive con links simples.
      *
-     * @return string  HTML de la <nav> de Bootstrap
+     * @return string  HTML de la <nav>
      */
     function component_navbar(): string {
         return <<<HTML
-        
+        <!-- NAVBAR -->
+        <nav class="bg-gray-100 border-b">
+          <div class="container mx-auto flex justify-between items-center p-3">
+            <a href="#" class="text-blue-700 font-semibold">Formulario</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600">Ayuda</a>
+          </div>
+        </nav>
         HTML;
     }
 
     /**
      * component_main_form
      * -------------------
-     * Sección principal (<main>) con una tarjeta (card) de Bootstrap
-     * que contiene un formulario mínimo de contacto.
-     *
-     * IMPORTANTE:
-     * - method="POST": el form se envía como POST (seguro para datos)
-     * - action="procesar.php": archivo que recibirá y validará la info
-     * - novalidate: desactiva validación HTML nativa; usaremos JS + servidor
-     * - Atributos "required", "minlength", "maxlength" ayudan a validar en front
+     * Sección principal (<main>) con un formulario estilizado con Tailwind.
      *
      * @return string  HTML del <main> con el formulario
      */
-    
     function component_main_form(): string {
-  $base   = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-  $action = htmlspecialchars($base . '/procesoLogin.php', ENT_QUOTES, 'UTF-8');
-  $usuarioPrefill = htmlspecialchars($_COOKIE['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
-  $checked = isset($_COOKIE['usuario']) ? 'checked' : '';
-  $rolCookie     = $_COOKIE['rol'] ?? '';
-  $rolAlumnoChk  = $rolCookie === 'alumno'  ? 'checked' : '';
-  $rolDocenteChk = $rolCookie === 'docente' ? 'checked' : '';
-  $rolCookie     = $_COOKIE['rol'] ?? ($rolCookie ?? '');
-  $materias = [
-    'Ingenieria en Software 2',
-    'Bases de Datos',
-    'Programacion Avanzada',
-    'Probabilidad y Estadistica',
-    'Paradigma y Lenguajes',
-    'Sistemas Operativos',
-  ];
-  $materiaCookie = $_COOKIE['materia'] ?? '';
-  if (!in_array($materiaCookie, $materias, true)) { $materiaCookie = ''; }
-  $optionsMateria = '';
-  foreach ($materias as $m) {
-    $safe = htmlspecialchars($m, ENT_QUOTES, 'UTF-8');
-    $sel  = ($m === $materiaCookie) ? ' selected' : '';
-    $optionsMateria .= "<option value=\"{$safe}\"{$sel}>{$safe}</option>";
-  }
-  $labelMateria = ($rolCookie === 'docente')
-    ? 'Materia a dictar clase particular'
-    : 'Materia a solicitar clase particular';
+      $base   = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+      $action = htmlspecialchars($base . '/procesoLogin.php', ENT_QUOTES, 'UTF-8');
+      $usuarioPrefill = htmlspecialchars($_COOKIE['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
+      $checked = isset($_COOKIE['usuario']) ? 'checked' : '';
+      $rolCookie     = $_COOKIE['rol'] ?? '';
+      $rolAlumnoChk  = $rolCookie === 'alumno'  ? 'checked' : '';
+      $rolDocenteChk = $rolCookie === 'docente' ? 'checked' : '';
+      $rolCookie     = $_COOKIE['rol'] ?? ($rolCookie ?? '');
+      $materias = [
+        'Ingenieria en Software 2',
+        'Bases de Datos',
+        'Programacion Avanzada',
+        'Probabilidad y Estadistica',
+        'Paradigma y Lenguajes',
+        'Sistemas Operativos',
+      ];
+      $materiaCookie = $_COOKIE['materia'] ?? '';
+      if (!in_array($materiaCookie, $materias, true)) { $materiaCookie = ''; }
+      $optionsMateria = '';
+      foreach ($materias as $m) {
+        $safe = htmlspecialchars($m, ENT_QUOTES, 'UTF-8');
+        $sel  = ($m === $materiaCookie) ? ' selected' : '';
+        $optionsMateria .= "<option value=\"{$safe}\"{$sel}>{$safe}</option>";
+      }
+      $labelMateria = ($rolCookie === 'docente')
+        ? 'Materia a dictar clase particular'
+        : 'Materia a solicitar clase particular';
 
-  $bgPath = 'src/img/educacion.png';
+      $bgPath = 'src/img/educacion.png';
 
-  return <<<HTML
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="fullscreen-center d-flex align-items-center justify-content-center"
-        style="
-          background:
-            linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)),
-            url('{$bgPath}') center / cover no-repeat;
-        ">
-    <div class="container" style="max-width: 640px;">
-      <div class="card shadow-lg border-0 bg-white bg-opacity-75" style="backdrop-filter: blur(4px); margin: 0;">
-        <div class="card-body p-4">
-          <h2 class="h4 mb-3 text-center">Iniciar Sesión</h2>
+      return <<<HTML
+      <!-- CONTENIDO PRINCIPAL -->
+      <main class="flex-1 flex items-center justify-center bg-cover bg-center" 
+            style="background-image: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('{$bgPath}')">
+        <div class="max-w-lg w-full bg-white/80 backdrop-blur-md shadow-lg rounded-lg p-6">
+          <h2 class="text-xl font-bold text-center mb-4">Iniciar Sesión</h2>
 
-          <form id="form-contacto" method="POST" action="{$action}" novalidate>
-            <div class="mb-3">
-              <label class="form-label" for="usuario">Usuario</label>
-              <input class="form-control" type="text" id="usuario" name="usuario"
-                     value="{$usuarioPrefill}" required minlength="4" maxlength="50">
-              <div class="invalid-feedback">Ingresá un usuario válido (mín. 4 caracteres).</div>
+          <form id="form-contacto" method="POST" action="{$action}" novalidate class="space-y-4">
+            
+            <div>
+              <label for="usuario" class="block font-medium mb-1">Usuario</label>
+              <input type="text" id="usuario" name="usuario"
+                     value="{$usuarioPrefill}" required minlength="4" maxlength="50"
+                     class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+              <p class="text-sm text-red-600 hidden">Ingresá un usuario válido (mín. 4 caracteres).</p>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label" for="clave">Contraseña</label>
-              <div class="input-group">
-                <input class="form-control" type="password" id="clave" name="clave"
-                       required minlength="6" autocomplete="current-password" aria-describedby="caps-hint">
-                <button class="btn btn-outline-secondary" type="button" id="toggle-pass">Ver</button>
+            <div>
+              <label for="clave" class="block font-medium mb-1">Contraseña</label>
+              <div class="flex">
+                <input type="password" id="clave" name="clave" required minlength="6" autocomplete="current-password"
+                       class="flex-1 border rounded-l px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                <button type="button" id="toggle-pass" 
+                        class="px-3 bg-gray-200 border border-l-0 rounded-r">Ver</button>
               </div>
-              <div id="caps-hint" class="form-text text-warning d-none">Bloq Mayús activado</div>
-              <div class="invalid-feedback">Ingresá tu contraseña (mín. 6 caracteres).</div>
+              <p id="caps-hint" class="text-yellow-600 text-sm hidden">Bloq Mayús activado</p>
+              <p class="text-sm text-red-600 hidden">Ingresá tu contraseña (mín. 6 caracteres).</p>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label d-block">Rol</label>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="rol" id="rol-alumno"
-                       value="alumno" required {$rolAlumnoChk}>
-                <label class="form-check-label" for="rol-alumno">Alumno</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="rol" id="rol-docente"
-                       value="docente" required {$rolDocenteChk}>
-                <label class="form-check-label" for="rol-docente">Docente</label>
-              </div>
-              <div class="form-text">Seleccioná tu rol.</div>
+            <div>
+              <span class="block font-medium mb-1">Rol</span>
+              <label class="mr-4">
+                <input type="radio" name="rol" id="rol-alumno" value="alumno" required {$rolAlumnoChk}>
+                Alumno
+              </label>
+              <label>
+                <input type="radio" name="rol" id="rol-docente" value="docente" required {$rolDocenteChk}>
+                Docente
+              </label>
+              <p class="text-sm text-gray-500">Seleccioná tu rol.</p>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label" for="materia" id="label-materia">{$labelMateria}</label>
-              <select class="form-select" id="materia" name="materia" required>
-                {$optionsMateria}
-              </select>
-              <div class="form-text">Elegí una materia.</div>
-            </div>
-
-            <div class="form-check my-2">
-              <input class="form-check-input" type="checkbox" id="recordarme" name="recordarme" value="1" {$checked}>
-              <label class="form-check-label" for="recordarme">Recordarme</label>
-            </div>
-
-            <hr class="my-4">
-            <button class="btn btn-primary w-100" type="submit">ENVIAR</button>
+            <hr>
+            <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700">
+              ENVIAR
+            </button>
           </form>
         </div>
-      </div>
-    </div>
-  </main>
-  HTML;
-}
-
-
-
+      </main>
+      HTML;
+    }
 
     /**
      * component_footer
@@ -252,52 +203,37 @@
      * @return string  HTML del <footer>
      */
     function component_footer(): string {
-    $year = date('Y');
-    return <<<HTML
-    <!-- FOOTER / Pie de página -->
-    <footer class="py-4 mt-auto site-footer"
-            style="background: linear-gradient(90deg, #007BFF 0%, #6f42c1 100%); color: #fff;">
-      <div class="container text-center small h-100 d-flex align-items-center justify-content-center">
-        &copy; {$year} Equipo de MiParticular. Todos los derechos reservados.
-      </div>
-    </footer>
-    HTML;
+      $year = date('Y');
+      return <<<HTML
+      <!-- FOOTER / Pie de página -->
+      <footer class="py-4 mt-auto bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+        <div class="container mx-auto text-center text-sm">
+          &copy; {$year} Equipo de MiParticular. Todos los derechos reservados.
+        </div>
+      </footer>
+      HTML;
     }
-
-
 
     /**
      * component_body_end_scripts
      * --------------------------
-     * Scripts que van al final del <body>:
-     * - Un pequeño IIFE en JS que agrega la clase "was-validated" si hay
-     *   campos inválidos, siguiendo el patrón de validación de Bootstrap.
-     * - El bundle JS de Bootstrap (incluye Popper) por CDN.
+     * Scripts que van al final del <body>.
+     * Incluye validación básica y toggle de password.
      *
-     * ¿Por qué al final del body?
-     * ---------------------------
-     * Para que el HTML se cargue primero y el JS no bloquee el render.
-     *
-     * @return string  Bloque <script> + JS de Bootstrap
+     * @return string  Bloque <script>
      */
     function component_body_end_scripts(): string {
         return <<<HTML
         <!-- SCRIPTS al final del <body> -->
         <script>
-          // IIFE: Immediately Invoked Function Expression (función que se ejecuta sola)
           (() => {
             const form = document.getElementById('form-contacto');
-            if (!form) return; // Si no existe el form en esta página, no hace nada
-
+            if (!form) return;
             form.addEventListener('submit', (e) => {
-              // checkValidity() usa reglas HTML5 (required, minlength, type="email", etc.)
               if (!form.checkValidity()) {
-                // Si hay errores, prevenimos el envío y mostramos estilos de error
                 e.preventDefault();
                 e.stopPropagation();
               }
-              // Bootstrap muestra los mensajes de error al tener esta clase
-              form.classList.add('was-validated');
             });
           })();
         </script>
@@ -315,15 +251,15 @@
               pass.addEventListener('keydown', (e) => {
                 if (!hint) return;
                 if (e.getModifierState && e.getModifierState('CapsLock')) {
-                  hint.classList.remove('d-none');
+                  hint.classList.remove('hidden');
                 } else {
-                  hint.classList.add('d-none');
+                  hint.classList.add('hidden');
                 }
               });
             }
           })();
-          </script>
-          <script>
+        </script>
+        <script>
           (() => {
             const label = document.getElementById('label-materia');
             function refreshMateriaLabel() {
@@ -336,12 +272,9 @@
             document.querySelectorAll('input[name="rol"]').forEach(el => {
               el.addEventListener('change', refreshMateriaLabel);
             });
-            // set inicial
             refreshMateriaLabel();
           })();
-          </script>
-        <!-- JavaScript de Bootstrap 5 (con Popper) por CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        </script>
         HTML;
     }
 ?>
