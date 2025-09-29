@@ -1,4 +1,10 @@
 <?php
+    declare(strict_types=1);
+
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
     /**
      * ==========================================
      * index.php — Versión documentada
@@ -13,9 +19,6 @@
      *
      * IMPORTANTE: Por la condición del proyecto, NO hay HTML fuera de PHP.
      */
-
-    // Tipado estricto activado (si una función pide string y pasamos int, error).
-    declare(strict_types=1);
 
     // Traemos el archivo layout.php, que contiene la función setDom()
     // __DIR__ significa “la carpeta donde está este archivo”.

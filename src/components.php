@@ -74,15 +74,30 @@
      * @return string        HTML del <header>
      */
     function component_header(string $brand = 'Mi Sitio'): string {
-    return <<<HTML
-    <!-- HEADER superior del sitio -->
-    <header class="py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
-      <div class="container mx-auto flex items-center h-full">
-        <img src="src/img/lentes.png" alt="Logo" class="h-9 w-auto mr-2">
-        <h1 class="text-lg font-semibold">{$brand}</h1>
-      </div>
-    </header>
-    HTML;
+      if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+      }
+
+      $userInfo = '';
+      if (!empty($_SESSION['usuario_nombre'])) {
+        $safeUser = htmlspecialchars((string)$_SESSION['usuario_nombre'], ENT_QUOTES, 'UTF-8');
+        $userInfo = <<<HTML
+        <p class="text-sm sm:text-base">Logueado como: <span class="font-semibold">{$safeUser}</span></p>
+        HTML;
+      }
+
+      return <<<HTML
+      <!-- HEADER superior del sitio -->
+      <header class="py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+        <div class="container mx-auto flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center">
+            <img src="src/img/lentes.png" alt="Logo" class="h-9 w-auto mr-2">
+            <h1 class="text-lg font-semibold">{$brand}</h1>
+          </div>
+          {$userInfo}
+        </div>
+      </header>
+      HTML;
     }
 
     /**
@@ -115,12 +130,20 @@
     function component_main_form(): string {
       $base   = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
       $action = htmlspecialchars($base . '/procesoLogin.php', ENT_QUOTES, 'UTF-8');
-      $usuarioPrefill = htmlspecialchars($_COOKIE['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
-      $checked = isset($_COOKIE['usuario']) ? 'checked' : '';
-      $rolCookie     = $_COOKIE['rol'] ?? '';
-      $rolAlumnoChk  = $rolCookie === 'alumno'  ? 'checked' : '';
-      $rolDocenteChk = $rolCookie === 'docente' ? 'checked' : '';
-      $rolCookie     = $_COOKIE['rol'] ?? ($rolCookie ?? '');
+
+      $oldValues = $_SESSION['old_login'] ?? [];
+      unset($_SESSION['old_login']);
+
+      $errorMsg = $_SESSION['login_error'] ?? '';
+      unset($_SESSION['login_error']);
+
+      $usuarioPrefill = $oldValues['usuario'] ?? ($_COOKIE['usuario'] ?? '');
+      $usuarioPrefill = htmlspecialchars($usuarioPrefill, ENT_QUOTES, 'UTF-8');
+
+      $rolPrevio = $oldValues['rol'] ?? ($_COOKIE['rol'] ?? '');
+      $rolAlumnoChk  = $rolPrevio === 'alumno'  ? 'checked' : '';
+      $rolDocenteChk = $rolPrevio === 'docente' ? 'checked' : '';
+
       $materias = [
         'Ingenieria en Software 2',
         'Bases de Datos',
@@ -129,29 +152,50 @@
         'Paradigma y Lenguajes',
         'Sistemas Operativos',
       ];
-      $materiaCookie = $_COOKIE['materia'] ?? '';
-      if (!in_array($materiaCookie, $materias, true)) { $materiaCookie = ''; }
+
+      $materiaPrev = $oldValues['materia'] ?? ($_COOKIE['materia'] ?? '');
+      if (!in_array($materiaPrev, $materias, true)) {
+        $materiaPrev = '';
+      }
+
       $optionsMateria = '';
       foreach ($materias as $m) {
         $safe = htmlspecialchars($m, ENT_QUOTES, 'UTF-8');
-        $sel  = ($m === $materiaCookie) ? ' selected' : '';
+        $sel  = ($m === $materiaPrev) ? ' selected' : '';
         $optionsMateria .= "<option value=\"{$safe}\"{$sel}>{$safe}</option>";
       }
-      $labelMateria = ($rolCookie === 'docente')
+
+      $labelMateria = ($rolPrevio === 'docente')
         ? 'Materia a dictar clase particular'
         : 'Materia a solicitar clase particular';
 
+      $captchaUrl = htmlspecialchars($base . '/captcha.php?ts=' . time(), ENT_QUOTES, 'UTF-8');
+
+      $placeholderSelected = $materiaPrev === '' ? ' selected' : '';
+
       $bgPath = 'src/img/educacion.png';
+
+      $alert = '';
+      if ($errorMsg !== '') {
+        $safeError = htmlspecialchars($errorMsg, ENT_QUOTES, 'UTF-8');
+        $alert = <<<HTML
+        <div class="rounded border border-red-300 bg-red-100 px-3 py-2 text-red-700 text-sm">
+          {$safeError}
+        </div>
+        HTML;
+      }
 
       return <<<HTML
       <!-- CONTENIDO PRINCIPAL -->
-      <main class="flex-1 flex items-center justify-center bg-cover bg-center" 
+      <main class="flex-1 flex items-center justify-center bg-cover bg-center"
             style="background-image: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('{$bgPath}')">
         <div class="max-w-lg w-full bg-white/80 backdrop-blur-md shadow-lg rounded-lg p-6">
           <h2 class="text-xl font-bold text-center mb-4">Iniciar Sesión</h2>
 
+          {$alert}
+
           <form id="form-contacto" method="POST" action="{$action}" novalidate class="space-y-4">
-            
+
             <div>
               <label for="usuario" class="block font-medium mb-1">Usuario</label>
               <input type="text" id="usuario" name="usuario"
@@ -165,7 +209,7 @@
               <div class="flex">
                 <input type="password" id="clave" name="clave" required minlength="6" autocomplete="current-password"
                        class="flex-1 border rounded-l px-3 py-2 focus:ring-2 focus:ring-blue-500">
-                <button type="button" id="toggle-pass" 
+                <button type="button" id="toggle-pass"
                         class="px-3 bg-gray-200 border border-l-0 rounded-r">Ver</button>
               </div>
               <p id="caps-hint" class="text-yellow-600 text-sm hidden">Bloq Mayús activado</p>
@@ -183,6 +227,24 @@
                 Docente
               </label>
               <p class="text-sm text-gray-500">Seleccioná tu rol.</p>
+            </div>
+
+            <div>
+              <label id="label-materia" for="materia" class="block font-medium mb-1">{$labelMateria}</label>
+              <select id="materia" name="materia" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                <option value="" disabled{$placeholderSelected}>Seleccioná una materia</option>
+                {$optionsMateria}
+              </select>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2">
+              <label for="captcha" class="block font-medium">Ingrese el código de la imagen</label>
+              <div class="flex items-center gap-3">
+                <img id="captcha-image" src="{$captchaUrl}" alt="Captcha" class="rounded border border-gray-300 bg-white p-1" width="140" height="40">
+                <button type="button" id="recargar-captcha" class="text-sm text-blue-700 hover:underline">Recargar</button>
+              </div>
+              <input type="text" id="captcha" name="captcha" required maxlength="6" autocomplete="off"
+                     class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
             </div>
 
             <hr>
@@ -273,6 +335,21 @@
               el.addEventListener('change', refreshMateriaLabel);
             });
             refreshMateriaLabel();
+          })();
+        </script>
+        <script>
+          (() => {
+            const btn = document.getElementById('recargar-captcha');
+            const img = document.getElementById('captcha-image');
+            if (!btn || !img) return;
+            const refresh = () => {
+              const baseSrc = img.src.split('?')[0];
+              img.src = baseSrc + '?ts=' + Date.now();
+            };
+            btn.addEventListener('click', (event) => {
+              event.preventDefault();
+              refresh();
+            });
           })();
         </script>
         HTML;
