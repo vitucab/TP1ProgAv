@@ -1,33 +1,74 @@
 <?php
-declare(strict_types=1);
+    /**
+     * ==========================================
+     * layout.php — Versión documentada
+     * ==========================================
+     *
+     * ¿Qué hace este archivo?
+     * -----------------------
+     * Define la función setDom(), que arma la PÁGINA COMPLETA en memoria
+     * como un único string de HTML (doctype, html, head, body y todas las
+     * secciones internas).
+     *
+     * No imprime nada directamente. Quien decide cuándo mostrarlo es
+     * index.php (u otra puerta de entrada) mediante: echo setDom([...]).
+     */
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+    // Tipado estricto: si una función pide string y le mandás un int, lanza error.
+    declare(strict_types=1);
 
-if (empty($_SESSION['autenticado']) || empty($_SESSION['usuario_nombre'])) {
-    $_SESSION['login_error'] = 'Debe iniciar sesión para acceder al panel.';
-    header('Location: index.php');
-    exit;
-}
+    // Importamos las funciones de componentes (head, header, navbar, main, footer, scripts)
+    // __DIR__ es la carpeta actual de este archivo; components.php está al lado (en /src).
+    require_once __DIR__ . '/components.php';
 
-require_once __DIR__ . '/src/inicio.php';
+    /**
+     * setDom
+     * ------
+     * Une todos los componentes en el orden correcto y devuelve el HTML final
+     * como TEXT0 (string). NO imprime.
+     *
+     * @param array $opts Opciones para personalizar la vista:
+     *   - 'title' (string): Título de la pestaña del navegador.
+     *   - 'brand' (string): Texto/marca que aparece en el header.
+     *   - 'main'  (string): Contenido principal (<main>...</main>) ya renderizado.
+     *                       Si no lo pasás, se usa por defecto component_main_form().
+     *   - 'showUser' (bool): Si es true y hay sesión, muestra "Logueado como" en el header.
+     *
+     * @return string HTML completo del documento.
+     */
+    function setDom(array $opts = []): string {
+        // Valores por defecto si no se pasan en $opts:
+        $title  = $opts['title']  ?? 'Formulario';   // Título de la <title>
+        $brand  = $opts['brand']  ?? 'Mi Sitio';     // Texto que se ve en el <header>
+        $main   = $opts['main']   ?? component_main_form(); // <main> por defecto: el formulario
+        $showUser = (bool)($opts['showUser'] ?? false);     // Mostrar usuario logueado en el header
 
-$usuario = htmlspecialchars((string)$_SESSION['usuario_nombre'], ENT_QUOTES, 'UTF-8');
+        // Invocamos cada componente para obtener su HTML como string:
+        $head   = component_head($title);
+        $header = component_header($brand, $showUser);
+        $nav    = component_navbar();
+        $footer = component_footer();
+        $scripts= component_body_end_scripts();
 
-$main = <<<HTML
-<main class="flex-1 flex items-center justify-center bg-slate-100 py-12">
-  <div class="bg-white shadow-lg rounded-lg p-8 text-center space-y-4 max-w-xl w-full mx-4">
-    <h2 class="text-2xl font-bold text-gray-800">Bienvenido/a al sitio</h2>
-    <p class="text-gray-600">Hola <span class="font-semibold">{$usuario}</span>, gracias por iniciar sesión.</p>
-    <a class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded" href="index.php">Volver al inicio</a>
-  </div>
-</main>
-HTML;
+        // Armamos el documento completo usando HEREDOC (bloque largo de texto).
+        // Interpolamos las variables {$head}, {$header}, etc. dentro del bloque.
+        $html = <<<HTML
+        <!doctype html>
+        <html lang="es">
+        <head>
+        {$head}
+        </head>
+        <body class="min-h-screen flex flex-col">
+        {$header}
+        {$nav}
+        {$main}
+        {$footer}
+        {$scripts}
+        </body>
+        </html>
+        HTML;
 
-echo setDom([
-    'title' => 'Inicio',
-    'brand' => 'Buscar Particular',
-    'main'  => $main,
-    'showUser' => true,
-]);
+        // Devolvemos el HTML armado; NO imprimimos acá.
+        return $html;
+    }
+?>

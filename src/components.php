@@ -70,21 +70,29 @@
      * Renderiza la franja superior del sitio (<header>) con el nombre
      * de la “marca” (brand). Es una sección estática arriba del todo.
      *
-     * @param string $brand  Texto que aparece como título/logotipo
-     * @return string        HTML del <header>
+     * @param string $brand    Texto que aparece como título/logotipo
+     * @param bool   $showUser Si es true y hay sesión iniciada, muestra el usuario.
+     * @return string          HTML del <header>
      */
-    function component_header(string $brand = 'Mi Sitio'): string {
-      if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
+    function component_header(string $brand = 'Mi Sitio', bool $showUser = false): string {
+      $userInfo = '';
+
+      if ($showUser) {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+          session_start();
+        }
+
+        if (!empty($_SESSION['usuario_nombre'])) {
+          $safeUser = htmlspecialchars((string)$_SESSION['usuario_nombre'], ENT_QUOTES, 'UTF-8');
+          $userInfo = <<<HTML
+          <div class="flex items-center justify-end">
+            <p class="text-sm sm:text-base">Logueado como: <span class="font-semibold">{$safeUser}</span></p>
+          </div>
+          HTML;
+        }
       }
 
-      $userInfo = '';
-      if (!empty($_SESSION['usuario_nombre'])) {
-        $safeUser = htmlspecialchars((string)$_SESSION['usuario_nombre'], ENT_QUOTES, 'UTF-8');
-        $userInfo = <<<HTML
-        <p class="text-sm sm:text-base">Logueado como: <span class="font-semibold">{$safeUser}</span></p>
-        HTML;
-      }
+      $userSection = $userInfo === '' ? '' : "\n          {$userInfo}";
 
       return <<<HTML
       <!-- HEADER superior del sitio -->
@@ -93,8 +101,7 @@
           <div class="flex items-center">
             <img src="src/img/lentes.png" alt="Logo" class="h-9 w-auto mr-2">
             <h1 class="text-lg font-semibold">{$brand}</h1>
-          </div>
-          {$userInfo}
+          </div>{$userSection}
         </div>
       </header>
       HTML;
