@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/src/database.php';
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
@@ -16,6 +18,25 @@ function redirect_with_error(string $message, array $oldValues): void {
     $_SESSION['old_login'] = $oldValues;
     header('Location: index.php');
     exit;
+}
+
+function verify_password(string $password, string $hash): bool
+{
+    if ($hash === '') {
+        return false;
+    }
+
+    $info = password_get_info($hash);
+    if ($info['algo'] !== 0) {
+        return password_verify($password, $hash);
+    }
+
+    $crypt = @crypt($password, $hash);
+    if (!is_string($crypt) || strlen($crypt) !== strlen($hash)) {
+        return false;
+    }
+
+    return hash_equals($crypt, $hash);
 }
 
 $usuario = isset($_POST['usuario']) ? trim((string)$_POST['usuario']) : '';
@@ -56,10 +77,30 @@ if ($captchaInput === '' || $captchaSession === '' || !hash_equals($captchaSessi
     redirect_with_error('El valor del captcha no es correcto.', $oldValues);
 }
 
-$credencialesValidas = $usuario === 'fcytuader' && $clave === 'programacionavanzada';
-if (!$credencialesValidas) {
+try {
+    $pdo = createOrOpenDatabase();
+} catch (Throwable $e) {
+    redirect_with_error('No se pudo conectar a la base de datos.', $oldValues);
+}
+
+$stmt = $pdo->prepare('SELECT clave_hash, rol, materia FROM usuarios WHERE usuario = :usuario LIMIT 1');
+$stmt->execute(['usuario' => $usuario]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($user === false) {
     redirect_with_error('Usuario o contraseña incorrectos.', $oldValues);
 }
+
+if (!verify_password($clave, (string)$user['clave_hash'])) {
+    redirect_with_error('Usuario o contraseña incorrectos.', $oldValues);
+}
+
+if ((string)$user['rol'] !== $rol || (string)$user['materia'] !== $materia) {
+    redirect_with_error('Los datos seleccionados no corresponden al usuario.', $oldValues);
+}
+
+$_SESSION['usuario_rol'] = $user['rol'];
+$_SESSION['usuario_materia'] = $user['materia'];
 
 session_regenerate_id(true);
 $_SESSION['autenticado'] = true;
@@ -68,3 +109,4 @@ unset($_SESSION['captcha']);
 
 header('Location: inicio.php');
 exit;
+

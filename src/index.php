@@ -5,13 +5,6 @@
         session_start();
     }
 
-    require_once __DIR__ . '/src/database.php';
-    try {
-        initializeDatabase();
-    } catch (Throwable $exception) {
-        error_log('No se pudo inicializar la base de datos: ' . $exception->getMessage());
-    }
-
     /**
      * ==========================================
      * index.php — Versión documentada

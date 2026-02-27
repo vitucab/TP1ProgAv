@@ -29,4 +29,5 @@ echo setDom([
     'title' => 'Inicio',
     'brand' => 'Buscar Particular',
     'main'  => $main,
+    'showUser' => true,
 ]);
